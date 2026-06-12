@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Interview - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active">
+                <a href="/upload" id="sidebar-upload"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Interview</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/dashboard" id="sidebar-dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-my-interviews"><i class="fa-solid fa-microphone"></i><span>My Interviews</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/practice" id="sidebar-practice"><i class="fa-solid fa-graduation-cap"></i><span>Practice</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/settings" id="sidebar-settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/help" id="sidebar-help"><i class="fa-solid fa-circle-question"></i><span>Help & Support</span></a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">{{ session.get('user_name', 'U')[0] }}</div>
+            <div class="user-info-box">
+                <span class="user-name-label">{{ session.get('user_name', 'Guest User') }}</span>
+                <span class="user-email-label">{{ session.get('user_email', 'guest@example.com') }}</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="app-content">
+        <div class="page-header">
+            <h2 class="page-title">Upload Your Interview</h2>
+            <p class="page-subtitle">Upload your audio or video interview and let our AI analyze your performance.</p>
+        </div>
+
+        <div class="workspace-grid">
+            <!-- Upload Container Left -->
+            <div class="upload-card">
+                <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+                    <div class="drag-zone" id="drop-zone">
+                        <input type="file" name="file" id="file-input" accept=".mp3,.wav,.mp4" style="display: none;">
+                        <div class="drag-icon-wrapper">
+                            <i class="fa-solid fa-cloud-arrow-up fa-3x"></i>
+                        </div>
+                        <h3>Drag and drop your file here</h3>
+                        <p>or click to browse your local computer</p>
+                        
+                        <div class="upload-formats">
+                            <span class="format-badge">MP3</span>
+                            <span class="format-badge">WAV</span>
+                            <span class="format-badge">MP4</span>
+                        </div>
+                    </div>
+
+                    <!-- Selected File Info -->
+                    <div class="selected-file-details" id="file-details">
+                        <div class="file-info-text">
+                            <span class="file-name" id="file-name">interview_recording.mp3</span>
+                            <span class="file-size" id="file-size">14.5 MB</span>
+                        </div>
+                        <i class="fa-regular fa-file-audio fa-lg" style="color: var(--primary-blue);"></i>
+                    </div>
+
+                    <!-- Upload Progress Bar (simulated by XHR request) -->
+                    <div class="file-progress-container" id="upload-progress-container">
+                        <div class="progress-label-row">
+                            <span>Uploading Interview...</span>
+                            <span id="upload-progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="upload-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Submit action button -->
+                    <div class="upload-action-row">
+                        <button type="submit" class="btn btn-primary" id="start-analysis-btn" disabled>
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> &nbsp;Start Analysis
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Hardware Status Right Card -->
+            <div class="gpu-side-card">
+                <div class="gpu-header">
+                    <i class="fa-solid fa-microchip fa-xl" style="color: #10B981;"></i>
+                    <div class="gpu-header-text">
+                        <span class="gpu-header-title">NVIDIA GPU Status</span>
+                        <span class="gpu-header-tag">
+                            {% if gpu_status.enabled %}
+                                <i class="fa-solid fa-circle-check"></i> Enabled
+                            {% else %}
+                                <i class="fa-solid fa-triangle-exclamation"></i> CPU Fallback
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="gpu-body">
+                    <div class="gpu-stat-row">
+                        <span class="gpu-stat-label">GPU Model</span>
+                        <span class="gpu-stat-value">{{ gpu_status.model }}</span>
+                    </div>
+                    <div class="gpu-stat-row">
+                        <span class="gpu-stat-label">CUDA Active</span>
+                        <span class="gpu-stat-value">{{ gpu_status.cuda_active }}</span>
+                    </div>
+                    <div class="gpu-stat-row">
+                        <span class="gpu-stat-label">Processing Speed</span>
+                        <span class="gpu-stat-value">{{ gpu_status.processing_speed }}</span>
+                    </div>
+                    <div class="gpu-stat-row">
+                        <span class="gpu-stat-label">Inference Status</span>
+                        <span class="gpu-stat-value" style="color: {% if gpu_status.enabled %}#10B981{% else %}#F59E0B{% endif %};">{{ gpu_status.inference_status }}</span>
+                    </div>
+                    
+                    <div class="gpu-graph-wrapper" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 0.5rem;">
+                        <div class="gpu-stat-row" style="font-size: 0.75rem; margin-bottom: 0.25rem;">
+                            <span class="gpu-stat-label">VRAM Load</span>
+                            <span class="gpu-stat-value">{{ gpu_status.utilization }}</span>
+                        </div>
+                        <div class="gpu-progress-bg">
+                            <div class="gpu-progress-fill" style="width: {% if gpu_status.enabled %}78%{% else %}0%{% endif %}; background: #10B981;"></div>
+                        </div>
+                    </div>
+                    
+                    <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 1rem; line-height: 1.4;">
+                        Your interview is processed using NVIDIA CUDA cores when available for accelerated transcript synthesis and vocabulary pattern searches.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

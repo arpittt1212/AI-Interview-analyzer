@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Interview Analyzer - Advanced Speech & Performance Analytics{% endblock %}
+
+{% block content %}
+<div id="home"></div>
+
+<!-- Hero Section -->
+<header class="hero-section">
+    <div class="hero-left">
+        <!-- Top Badge -->
+        <div class="top-badge">
+            <i class="fa-solid fa-microchip" style="color: #10B981;"></i>
+            <span>NVIDIA GPU Powered</span>
+        </div>
+
+        <h1 class="hero-title">
+            AI Interview<br>
+            <span>Analyzer</span>
+        </h1>
+
+        <p class="hero-subtitle">
+            Analyze your interview performance using Artificial Intelligence, NLP, Whisper AI, and NVIDIA GPU acceleration. Get detailed communication insights, confidence analysis, grammar evaluation, and personalized feedback to improve your interview skills.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="/upload" class="btn btn-primary" id="btn-hero-upload">Upload Interview</a>
+            <a href="{% if session.get('user_id') %}/reports{% else %}/login{% endif %}" class="btn btn-secondary" id="btn-hero-dashboard">View Dashboard</a>
+        </div>
+
+        <!-- Trust Section -->
+        <div class="trust-section">
+            <div style="display: flex; gap: -8px;">
+                <!-- Face Avatar Overlaps -->
+                <div class="user-avatar" style="border: 2px solid var(--white); width: 2.5rem; height: 2.5rem;">JD</div>
+                <div class="user-avatar" style="border: 2px solid var(--white); width: 2.5rem; height: 2.5rem; margin-left: -12px; background: #10B981;">AM</div>
+                <div class="user-avatar" style="border: 2px solid var(--white); width: 2.5rem; height: 2.5rem; margin-left: -12px; background: #F59E0B;">KT</div>
+            </div>
+            <div class="trust-users">
+                <span class="count">Trusted by 10,000+ Users</span>
+                <span class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star-half-stroke"></i>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">&nbsp; 4.9/5 Rating</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Right side: 3D Illustration Mockup -->
+    <div class="hero-right">
+        <div class="premium-illustration">
+            <!-- 1. AI Brain pulsing logo card -->
+            <div class="dashboard-card-mock card-mock-brain">
+                <svg class="brain-pulsing-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-3.12 3.01 3.01 0 0 1 0-4.88 2.5 2.5 0 0 1 0-3.12A2.5 2.5 0 0 1 9.5 2Z"></path>
+                    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-3.12 3.01 3.01 0 0 0 0-4.88 2.5 2.5 0 0 0 0-3.12A2.5 2.5 0 0 0 14.5 2Z"></path>
+                </svg>
+            </div>
+
+            <!-- 2. Dashboard Mockup Card -->
+            <div class="dashboard-card-mock card-mock-main">
+                <div class="mock-header">
+                    <span class="mock-dot" style="background-color: #EF4444;"></span>
+                    <span class="mock-dot" style="background-color: #F59E0B;"></span>
+                    <span class="mock-dot" style="background-color: #10B981;"></span>
+                    <div class="mock-bar" style="width: 50%; margin-left: 0.5rem;"></div>
+                </div>
+                <div class="mock-bar" style="width: 80%; margin-bottom: 0.75rem;"></div>
+                <div class="mock-bar" style="width: 60%; margin-bottom: 1rem;"></div>
+                
+                <div class="mock-chart-lines">
+                    <div class="mock-chart-bar" style="width: 75%;"></div>
+                    <div class="mock-chart-bar" style="width: 90%; background: linear-gradient(90deg, #10B981 0%, #34D399 100%);"></div>
+                    <div class="mock-chart-bar" style="width: 60%; background: linear-gradient(90deg, #F59E0B 0%, #FBBF24 100%);"></div>
+                </div>
+            </div>
+
+            <!-- 3. NVIDIA RTX 4090 Status Card -->
+            <div class="dashboard-card-mock card-mock-gpu">
+                <div class="gpu-glowing-chip">
+                    <div class="gpu-chip-icon">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <div>
+                        <div class="gpu-title">NVIDIA RTX 4090</div>
+                        <div class="gpu-subtitle" style="color: #64748B;">GPU Acceleration</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div class="gpu-metric">
+                        <span>Utilization</span>
+                        <span class="gpu-badge-success">98%</span>
+                    </div>
+                    <div class="gpu-progress-bg">
+                        <div class="gpu-progress-fill"></div>
+                    </div>
+                    <div class="gpu-metric" style="margin-top: 0.75rem; color: #94A3B8; font-size: 0.75rem;">
+                        <span>Speed Status</span>
+                        <span>High Performance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Features Section -->
+<section class="section-wrapper" id="features">
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">Powerful AI Features</h2>
+            <p class="section-subtitle">Everything you need to analyze and improve your interview performance.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 1: Speech-to-Text -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-microphone-lines fa-lg"></i>
+                </div>
+                <h3>Speech-to-Text</h3>
+                <p>Convert audio or video file formats to highly accurate transcription text using advanced OpenAI Whisper models.</p>
+            </div>
+
+            <!-- Feature 2: Communication Analysis -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-comments fa-lg"></i>
+                </div>
+                <h3>Communication Analysis</h3>
+                <p>Evaluate clarity, coherence, vocab patterns, and communication skills to structure your answers logically.</p>
+            </div>
+
+            <!-- Feature 3: Confidence Detection -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-gauge-high fa-lg"></i>
+                </div>
+                <h3>Confidence Detection</h3>
+                <p>Analyze speaking speed patterns, hesitation points, and confidence levels to ensure authoritative speech delivery.</p>
+            </div>
+
+            <!-- Feature 4: Grammar Evaluation -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-spell-check fa-lg"></i>
+                </div>
+                <h3>Grammar Evaluation</h3>
+                <p>Detect grammar irregularities, vocabulary diversity, and syntax structures to convey crisp, professional ideas.</p>
+            </div>
+
+            <!-- Feature 5: Filler Word Detection -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+                </div>
+                <h3>Filler Word Detection</h3>
+                <p>Identify verbal crutches and filler words that detract from impact, highlighting speech occurrences of:</p>
+                <div class="filler-words-badge-list">
+                    <span class="filler-badge">um</span>
+                    <span class="filler-badge">uh</span>
+                    <span class="filler-badge">like</span>
+                    <span class="filler-badge">actually</span>
+                    <span class="filler-badge">basically</span>
+                </div>
+            </div>
+
+            <!-- Feature 6: AI Feedback Generation -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-wand-magic-sparkles fa-lg"></i>
+                </div>
+                <h3>AI Feedback Generation</h3>
+                <p>Generate highly personalized recommendations, key developmental goals, and templates to optimize future mock reviews.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section (Dark Grid) -->
+<section class="stats-section">
+    <div class="stats-container">
+        <div class="stat-item">
+            <span class="stat-num">95%</span>
+            <span class="stat-desc">Speech Accuracy</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-num">10X</span>
+            <span class="stat-desc">Faster Processing with GPU</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-num">500K+</span>
+            <span class="stat-desc">Interviews Analyzed</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-num">24/7</span>
+            <span class="stat-desc">AI Analysis Available</span>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="section-wrapper" style="background-color: var(--light-gray);" id="how-it-works">
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">A simple, connected workflow to analyze and perfect your communication skills.</p>
+        </div>
+
+        <div class="workflow-container">
+            <!-- Connector Line -->
+            <div class="workflow-line"></div>
+            
+            <div class="workflow-steps">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-num-icon">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h4>Step 1</h4>
+                    <p>Upload Interview</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">MP3, WAV, or MP4 formats</span>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-num-icon">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <h4>Step 2</h4>
+                    <p>AI Processing</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Whisper transcribes speech</span>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-num-icon">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+                    <h4>Step 3</h4>
+                    <p>Deep Analysis</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">NLP scans pace & fillers</span>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-num-icon">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <h4>Step 4</h4>
+                    <p>Generate Report</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Scores & advice populated</span>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step-card">
+                    <div class="step-num-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h4>Step 5</h4>
+                    <p>Improve Skills</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Apply recommendations</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="section-wrapper" id="pricing">
+    <div class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">Transparent SaaS Pricing</h2>
+            <p class="section-subtitle">Get started with our free trial plan or upgrade to unlock enterprise recruiter scaling.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); max-width: 800px; margin: 0 auto; gap: 2.5rem;">
+            <!-- Free Plan -->
+            <div class="feature-card" style="border: 1px solid var(--border-gray); padding: 2.5rem;">
+                <span style="font-weight: 800; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Starter Plan</span>
+                <h3 style="font-size: 2rem; margin-top: 0.5rem; margin-bottom: 1rem; color: var(--dark-navy);">$0 <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">/ free forever</span></h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-main);">
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> 3 Interviews Analyzed per month</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Whisper CPU Speech-to-Text</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Basic Filler Word Analytics</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Standard PDF Export</li>
+                </ul>
+                <a href="/register" class="btn btn-secondary btn-block">Sign Up Free</a>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="feature-card" style="border: 2px solid var(--primary-blue); padding: 2.5rem; position: relative; box-shadow: var(--shadow-lg); background-color: var(--white);">
+                <span style="position: absolute; top: -14px; right: 2rem; background: var(--primary-blue); color: var(--white); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: var(--radius-full);">RECOMMENDED</span>
+                <span style="font-weight: 800; font-size: 0.8rem; text-transform: uppercase; color: var(--primary-blue); letter-spacing: 0.05em;">Pro Analyst</span>
+                <h3 style="font-size: 2rem; margin-top: 0.5rem; margin-bottom: 1rem; color: var(--dark-navy);">$19 <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">/ month</span></h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-main);">
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Unlimited Audio & Video Uploads</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> 10X GPU Accelerated Processing</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Advanced Grammar & NLP Diagnostics</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success); margin-right: 0.5rem;"></i> Custom AI Coaching Recommendations</li>
+                </ul>
+                <a href="/register" class="btn btn-primary btn-block">Upgrade to Pro</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Us Section -->
+<section class="section-wrapper" style="background-color: var(--light-gray);" id="about-us">
+    <div class="section-container">
+        <div class="section-header" style="max-width: 44rem;">
+            <h2 class="section-title">About AI Interview Analyzer</h2>
+            <p class="section-subtitle">We are committed to helping job seekers and interview candidates master their communication skills. Our platform uses state-of-the-art NLP, Whisper AI speech recognition, and NVIDIA GPU acceleration to break down interview audios into comprehensive, clear, and actionable feedback.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

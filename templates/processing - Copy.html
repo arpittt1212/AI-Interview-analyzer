@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Analyzing Interview - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active">
+                <a href="/upload" id="sidebar-upload"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Interview</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/dashboard" id="sidebar-dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-my-interviews"><i class="fa-solid fa-microphone"></i><span>My Interviews</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/practice" id="sidebar-practice"><i class="fa-solid fa-graduation-cap"></i><span>Practice</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/settings" id="sidebar-settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/help" id="sidebar-help"><i class="fa-solid fa-circle-question"></i><span>Help & Support</span></a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">{{ session.get('user_name', 'U')[0] }}</div>
+            <div class="user-info-box">
+                <span class="user-name-label">{{ session.get('user_name', 'Guest User') }}</span>
+                <span class="user-email-label">{{ session.get('user_email', 'guest@example.com') }}</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Processing Area -->
+    <main class="app-content" id="processing-console-wrapper" data-interview-id="{{ interview_id }}">
+        <div class="processing-card">
+            <div class="processing-header">
+                <div class="console-loader"></div>
+                <h2 class="page-title" style="margin-bottom: 0.5rem;">AI Analysis In Progress</h2>
+                <p class="page-subtitle">Please wait while our models process your audio. Do not refresh this page.</p>
+            </div>
+
+            <!-- Pipeline Progress stages list -->
+            <div class="processing-stages">
+                <!-- Stage 1 -->
+                <div class="stage-item completed">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Upload Complete</span>
+                    </div>
+                    <span class="stage-right" style="color: var(--success);">Completed</span>
+                </div>
+
+                <!-- Stage 2 -->
+                <div class="stage-item active">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Speech-to-Text Conversion</span>
+                    </div>
+                    <span class="stage-right" style="color: var(--primary-blue);">Analyzing...</span>
+                </div>
+
+                <!-- Stage 3 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Transcript Generation</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+
+                <!-- Stage 4 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Communication Analysis</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+
+                <!-- Stage 5 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Confidence Analysis</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+
+                <!-- Stage 6 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Grammar Analysis</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+
+                <!-- Stage 7 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Performance Scoring</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+
+                <!-- Stage 8 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">AI Feedback Generation</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+
+                <!-- Stage 9 -->
+                <div class="stage-item pending">
+                    <div class="stage-left">
+                        <span class="stage-status-dot"></span>
+                        <span class="stage-title">Report Ready</span>
+                    </div>
+                    <span class="stage-right">Pending</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

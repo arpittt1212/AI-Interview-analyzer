@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Help & Support - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="/upload" id="sidebar-upload"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Interview</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/dashboard" id="sidebar-dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-my-interviews"><i class="fa-solid fa-microphone"></i><span>My Interviews</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/practice" id="sidebar-practice"><i class="fa-solid fa-graduation-cap"></i><span>Practice</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/settings" id="sidebar-settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            </li>
+            <li class="sidebar-item active">
+                <a href="/help" id="sidebar-help"><i class="fa-solid fa-circle-question"></i><span>Help & Support</span></a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">{{ session.get('user_name', 'U')[0] }}</div>
+            <div class="user-info-box">
+                <span class="user-name-label">{{ session.get('user_name', 'Guest User') }}</span>
+                <span class="user-email-label">{{ session.get('user_email', 'guest@example.com') }}</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="app-content" style="max-width: 900px;">
+        <div class="page-header">
+            <h2 class="page-title">Help & Support Desk</h2>
+            <p class="page-subtitle">Read FAQs to master speech score calibrations or submit a direct inquiry to recruitment support.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2.5rem; align-items: flex-start;">
+            <!-- FAQ Accordion Left -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-circle-question" style="color: var(--primary-blue);"></i> &nbsp;Frequently Asked Questions</span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <!-- FAQ 1 -->
+                    <details class="faq-details">
+                        <summary class="faq-summary">How does Whisper Speech-to-Text transcription operate?</summary>
+                        <p class="faq-content">
+                            We use OpenAI's Whisper model (tiny model by default to conserve memory). When you upload an audio file, PyTorch parses the waveform and decodes the audio into text using sequence-to-sequence deep learning layers.
+                        </p>
+                    </details>
+
+                    <!-- FAQ 2 -->
+                    <details class="faq-details">
+                        <summary class="faq-summary">How are the vocal pace WPM scores calculated?</summary>
+                        <p class="faq-content">
+                            Vocal speed is measured in Words Per Minute (WPM). The ideal professional speech pace is between 110 and 150 WPM. Speeds outside this range are scored slightly lower, indicating potential monotone hesitation (slow) or fast/coherence issues (fast).
+                        </p>
+                    </details>
+
+                    <!-- FAQ 3 -->
+                    <details class="faq-details">
+                        <summary class="faq-summary">What are verbal crutch words or filler words?</summary>
+                        <p class="faq-content">
+                            Verbal crutches are fillers like "um", "uh", "like", "actually", and "basically". Our NLP analyzer counts occurrences of these words in sentences. Minimizing these words shows clarity and high communication scores.
+                        </p>
+                    </details>
+
+                    <!-- FAQ 4 -->
+                    <details class="faq-details">
+                        <summary class="faq-summary">Do I need an NVIDIA GPU to run this application?</summary>
+                        <p class="faq-content">
+                            No! While NVIDIA GPU acceleration via CUDA cores improves speech processing times by up to 10x, the application incorporates a CPU fallback and High-Fidelity simulation mode, ensuring it runs on any desktop or laptop instantly.
+                        </p>
+                    </details>
+
+                    <!-- FAQ 5 -->
+                    <details class="faq-details">
+                        <summary class="faq-summary">How do I export my interview analysis report?</summary>
+                        <p class="faq-content">
+                            Navigate to any results dashboard and click "Download AI Report PDF". Our stylesheet automatically converts the dashboard cards into a printable document, triggering the browser's PDF generation utility.
+                        </p>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Support Ticket Form Right -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-envelope" style="color: #10B981;"></i> &nbsp;Submit Support Ticket</span>
+                </div>
+                
+                <form onsubmit="alert('Support ticket submitted successfully! Our recruitment engineering team will review your inquiry.'); this.reset(); return false;" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-input" placeholder="e.g. CUDA device mapping issue" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message Details</label>
+                        <textarea class="form-input" rows="5" placeholder="Describe your question or technical issue here..." style="resize: none; font-family: var(--font-main);" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-paper-plane"></i> &nbsp;Send Support Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Custom FAQ accordion styling -->
+<style>
+    .faq-details {
+        border: 1px solid var(--border-gray);
+        border-radius: var(--radius-md);
+        background-color: var(--light-gray);
+        overflow: hidden;
+        transition: var(--transition-all);
+    }
+    .faq-details[open] {
+        background-color: var(--white);
+        border-color: rgba(37, 99, 235, 0.3);
+        box-shadow: var(--shadow-sm);
+    }
+    .faq-summary {
+        padding: 0.85rem 1.25rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        outline: none;
+        color: var(--dark-navy);
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .faq-summary::after {
+        content: '+';
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+    }
+    .faq-details[open] .faq-summary::after {
+        content: '-';
+    }
+    .faq-content {
+        padding: 0 1.25rem 1.25rem 1.25rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        border-top: 1px solid var(--border-gray);
+        padding-top: 0.75rem;
+    }
+</style>
+{% endblock %}

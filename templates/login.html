@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Enter your credentials to access your interview workspace</p>
+        </div>
+
+        <form action="/login" method="POST" id="login-form">
+            <!-- Email Input -->
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="name@company.com" required autocomplete="email">
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <!-- Options Row -->
+            <div class="form-actions-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="remember" id="remember-me">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" class="forgot-link" onclick="alert('Demo Feature: Password reset requests are mocked. Please register a new account if you forgot your password.')">Forgot password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-block" id="btn-login-submit">Login to Workspace</button>
+        </form>
+
+        <div class="auth-header" style="margin-top: 1.5rem; margin-bottom: 0;">
+            <p style="font-size: 0.875rem;">Don't have an account? <a href="/register">Sign up now</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

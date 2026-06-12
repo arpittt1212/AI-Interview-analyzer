@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="/upload" id="sidebar-upload"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Interview</span></a>
+            </li>
+            <li class="sidebar-item active">
+                <a href="/dashboard" id="sidebar-dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-my-interviews"><i class="fa-solid fa-microphone"></i><span>My Interviews</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/practice" id="sidebar-practice"><i class="fa-solid fa-graduation-cap"></i><span>Practice</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/settings" id="sidebar-settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/help" id="sidebar-help"><i class="fa-solid fa-circle-question"></i><span>Help & Support</span></a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">{{ session.get('user_name', 'U')[0] }}</div>
+            <div class="user-info-box">
+                <span class="user-name-label">{{ session.get('user_name', 'Guest User') }}</span>
+                <span class="user-email-label">{{ session.get('user_email', 'guest@example.com') }}</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="app-content">
+        <div class="page-header">
+            <h2 class="page-title">Performance Dashboard</h2>
+            <p class="page-subtitle">Aggregate metrics and communication trends across all your interview logs.</p>
+        </div>
+
+        {% if interviews_count > 0 %}
+            <!-- Top Aggregate Metrics -->
+            <div class="results-grid-top" style="margin-bottom: 2.5rem;">
+                <div class="metric-card">
+                    <span class="metric-label">Total Audited</span>
+                    <span class="metric-val">{{ interviews_count }}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Uploaded Recordings</span>
+                </div>
+                <div class="metric-card score-overall">
+                    <span class="metric-label">Avg Overall Score</span>
+                    <span class="metric-val">{{ avg_overall_score }}</span>
+                    <span style="font-size: 0.75rem; color: var(--primary-blue); font-weight: 700; margin-top: 0.25rem;">Target Bench: 85+</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Avg Vocal Pace</span>
+                    <span class="metric-val">{{ avg_speed }}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Words Per Minute</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Filler Words</span>
+                    <span class="metric-val" style="color: var(--danger);">{{ total_fillers }}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Detected Crutches</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Analytics Charts -->
+            <div class="dashboard-analysis-layout" style="grid-template-columns: 1fr 1fr; margin-bottom: 2.5rem;">
+                <!-- Line Chart: Improvement Progression -->
+                <div class="dashboard-panel">
+                    <div class="panel-header">
+                        <span class="panel-title"><i class="fa-solid fa-chart-line" style="color: var(--primary-blue);"></i> &nbsp;Score Progression Trends</span>
+                    </div>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="progressTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bar Chart: Filler Word Frequency -->
+                <div class="dashboard-panel">
+                    <div class="panel-header">
+                        <span class="panel-title"><i class="fa-solid fa-chart-simple" style="color: var(--danger);"></i> &nbsp;Filler Word Distribution</span>
+                    </div>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="fillerFrequencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Empty Dashboard State -->
+            <div class="reports-table-card">
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fa-solid fa-chart-column fa-4x" style="color: var(--border-gray); margin-bottom: 1rem;"></i>
+                    </div>
+                    <h3>No Analytics Available</h3>
+                    <p>Audit at least one interview file to visualize performance progression lines.</p>
+                    <a href="/upload" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> &nbsp;Upload Recording</a>
+                </div>
+            </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if interviews_count > 0 %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const historyData = JSON.parse('{{ history_json|safe }}');
+        const fillerData = JSON.parse('{{ fillers_json|safe }}');
+
+        // Initialize Score Progression Line Chart
+        const progressCtx = document.getElementById('progressTrendChart');
+        if (progressCtx) {
+            new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: historyData.map(d => d.date),
+                    datasets: [{
+                        label: 'Overall Performance Score',
+                        data: historyData.map(d => d.score),
+                        borderColor: '#2563EB',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#2563EB',
+                        pointBorderColor: '#ffffff',
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 50,
+                            max: 100,
+                            ticks: {
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Initialize Filler Word Frequency Bar Chart
+        const fillerCtx = document.getElementById('fillerFrequencyChart');
+        if (fillerCtx) {
+            new Chart(fillerCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Um', 'Uh', 'Like', 'Actually', 'Basically'],
+                    datasets: [{
+                        label: 'Total Occurrences',
+                        data: [
+                            fillerData.um || 0,
+                            fillerData.uh || 0,
+                            fillerData.like || 0,
+                            fillerData.actually || 0,
+                            fillerData.basically || 0
+                        ],
+                        backgroundColor: [
+                            '#3B82F6',
+                            '#60A5FA',
+                            '#93C5FD',
+                            '#F59E0B',
+                            '#EF4444'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

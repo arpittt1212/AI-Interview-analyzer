@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+
+{% block title %}Practice Interview - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="/upload" id="sidebar-upload"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Interview</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/dashboard" id="sidebar-dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-my-interviews"><i class="fa-solid fa-microphone"></i><span>My Interviews</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports</span></a>
+            </li>
+            <li class="sidebar-item active">
+                <a href="/practice" id="sidebar-practice"><i class="fa-solid fa-graduation-cap"></i><span>Practice</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/settings" id="sidebar-settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/help" id="sidebar-help"><i class="fa-solid fa-circle-question"></i><span>Help & Support</span></a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">{{ session.get('user_name', 'U')[0] }}</div>
+            <div class="user-info-box">
+                <span class="user-name-label">{{ session.get('user_name', 'Guest User') }}</span>
+                <span class="user-email-label">{{ session.get('user_email', 'guest@example.com') }}</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="app-content">
+        <div class="page-header">
+            <h2 class="page-title">Practice Arena</h2>
+            <p class="page-subtitle">Select a common interview question, record your response, and let our AI analyze your performance.</p>
+        </div>
+
+        <div class="workspace-grid" style="grid-template-columns: 320px 1fr;">
+            <!-- Questions List Left -->
+            <div class="dashboard-panel" style="padding: 1.25rem;">
+                <span class="panel-title" style="display: block; margin-bottom: 1rem; font-size: 1rem;">Interview Questions</span>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Technical Category -->
+                    <div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Technical (SaaS / AI)</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
+                            <button class="question-btn active-question" onclick="selectQuestion(this, 'What is database indexing and how does it speed up queries?')">
+                                Database Indexing
+                            </button>
+                            <button class="question-btn" onclick="selectQuestion(this, 'Can you explain the difference between a list and a tuple in Python?')">
+                                Lists vs Tuples
+                            </button>
+                            <button class="question-btn" onclick="selectQuestion(this, 'How does Whisper speech-to-text model handle multilingual audio transcription?')">
+                                Whisper Translation
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Behavioral Category -->
+                    <div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Behavioral (STAR Method)</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem;">
+                            <button class="question-btn" onclick="selectQuestion(this, 'Tell me about a time you had to deal with a complex technical challenge.')">
+                                Complex Tech Challenge
+                            </button>
+                            <button class="question-btn" onclick="selectQuestion(this, 'Describe a situation where you had a conflict with a teammate.')">
+                                Team Conflict Resolution
+                            </button>
+                            <button class="question-btn" onclick="selectQuestion(this, 'Why do you want to join our company as an AI Software Engineer?')">
+                                Company Fit & Interest
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recording Console Right -->
+            <div class="upload-card" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 480px; align-items: center; text-align: center; padding: 3rem 2rem;">
+                <div>
+                    <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--primary-blue); letter-spacing: 0.05em;">Selected Question Prompt</span>
+                    <h3 id="current-question-text" style="font-size: 1.4rem; color: var(--dark-navy); margin-top: 0.75rem; margin-bottom: 2rem; max-width: 580px; font-weight: 700; line-height: 1.4;">
+                        What is database indexing and how does it speed up queries?
+                    </h3>
+                </div>
+
+                <!-- Visual Recording Hub -->
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <!-- Waveform Animation -->
+                    <div id="recording-wave-grid" style="display: none; align-items: center; justify-content: center; gap: 4px; height: 40px; margin-bottom: 1rem;">
+                        <span class="wave-bar" style="animation-delay: 0.1s;"></span>
+                        <span class="wave-bar" style="animation-delay: 0.3s;"></span>
+                        <span class="wave-bar" style="animation-delay: 0.5s;"></span>
+                        <span class="wave-bar" style="animation-delay: 0.2s;"></span>
+                        <span class="wave-bar" style="animation-delay: 0.4s;"></span>
+                    </div>
+
+                    <!-- Mic Action Round Button -->
+                    <button id="mic-action-btn" class="mic-round-btn" onclick="toggleMic()">
+                        <i id="mic-icon" class="fa-solid fa-microphone fa-2x"></i>
+                    </button>
+                    
+                    <span id="recording-timer" style="font-weight: 700; font-size: 1.15rem; color: var(--text-muted); font-family: monospace;">00:00</span>
+                    <span id="recording-status" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Click button to start recording</span>
+                    
+                    <!-- Browser Player -->
+                    <audio id="playback-player" controls style="display: none; margin-top: 1rem; border-radius: var(--radius-md);"></audio>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="margin-top: 2rem; width: 100%; max-width: 300px;">
+                    <button id="submit-practice-btn" class="btn btn-primary btn-block" disabled onclick="submitRecordedAudio()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> &nbsp;Audit My Response
+                    </button>
+                    <span id="upload-status-label" style="display: none; font-size: 0.8rem; color: var(--primary-blue); font-weight: 600; margin-top: 0.5rem;">Uploading recording...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Custom Internal CSS for Question elements and Mic buttons -->
+<style>
+    .question-btn {
+        width: 100%;
+        text-align: left;
+        padding: 0.6rem 0.85rem;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-gray);
+        background: var(--light-gray);
+        font-family: var(--font-main);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition-all);
+        color: var(--text-main);
+    }
+    .question-btn:hover {
+        border-color: var(--primary-blue);
+        color: var(--primary-blue);
+        background-color: var(--white);
+    }
+    .question-btn.active-question {
+        background-color: rgba(37, 99, 235, 0.08);
+        border-color: var(--primary-blue);
+        color: var(--primary-blue);
+        font-weight: 700;
+    }
+    .mic-round-btn {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-full);
+        background-color: var(--primary-blue);
+        color: var(--white);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+        transition: var(--transition-all);
+    }
+    .mic-round-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+    }
+    .mic-round-btn.recording {
+        background-color: var(--danger);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+        animation: pulseMic 1.5s infinite;
+    }
+    .wave-bar {
+        width: 4px;
+        height: 25px;
+        background-color: var(--danger);
+        border-radius: var(--radius-full);
+        animation: pulseWave 1s ease-in-out infinite alternate;
+    }
+    @keyframes pulseMic {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1); }
+    }
+    @keyframes pulseWave {
+        from { height: 10px; }
+        to { height: 35px; }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+    let timerInterval;
+    let secondsElapsed = 0;
+    let recordedBlob;
+
+    function selectQuestion(btn, questionText) {
+        document.querySelectorAll('.question-btn').forEach(b => b.classList.remove('active-question'));
+        btn.classList.add('active-question');
+        document.getElementById('current-question-text').textContent = questionText;
+        
+        // Reset recorder state
+        resetRecorderUI();
+    }
+
+    function toggleMic() {
+        if (!isRecording) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    }
+
+    function startRecording() {
+        audioChunks = [];
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                
+                isRecording = true;
+                secondsElapsed = 0;
+                
+                // Update UI state
+                const micBtn = document.getElementById('mic-action-btn');
+                const micIcon = document.getElementById('mic-icon');
+                const waveGrid = document.getElementById('recording-wave-grid');
+                const timerEl = document.getElementById('recording-timer');
+                const statusEl = document.getElementById('recording-status');
+                const playback = document.getElementById('playback-player');
+                const submitBtn = document.getElementById('submit-practice-btn');
+
+                micBtn.classList.add('recording');
+                micIcon.className = 'fa-solid fa-stop fa-2x';
+                waveGrid.style.display = 'flex';
+                statusEl.textContent = 'Recording response... Click stop when finished.';
+                statusEl.style.color = 'var(--danger)';
+                playback.style.display = 'none';
+                submitBtn.disabled = true;
+
+                // Start timer
+                timerInterval = setInterval(() => {
+                    secondsElapsed++;
+                    const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+                    const secs = String(secondsElapsed % 60).padStart(2, '0');
+                    timerEl.textContent = `${mins}:${secs}`;
+                }, 1000);
+
+                mediaRecorder.addEventListener("dataavailable", event => {
+                    audioChunks.push(event.data);
+                });
+
+                mediaRecorder.addEventListener("stop", () => {
+                    recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(recordedBlob);
+                    playback.src = audioUrl;
+                    playback.style.display = 'block';
+                    submitBtn.disabled = false;
+                    
+                    // Stop all tracks in mic stream to release microphone
+                    stream.getTracks().forEach(track => track.stop());
+                });
+            })
+            .catch(err => {
+                alert("Microphone permission denied or not supported by browser.");
+                console.error("Mic error:", err);
+            });
+    }
+
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            clearInterval(timerInterval);
+
+            // Update UI state
+            const micBtn = document.getElementById('mic-action-btn');
+            const micIcon = document.getElementById('mic-icon');
+            const waveGrid = document.getElementById('recording-wave-grid');
+            const statusEl = document.getElementById('recording-status');
+
+            micBtn.classList.remove('recording');
+            micIcon.className = 'fa-solid fa-microphone fa-2x';
+            waveGrid.style.display = 'none';
+            statusEl.textContent = 'Recording complete. Review your playback below.';
+            statusEl.style.color = 'var(--success)';
+        }
+    }
+
+    function resetRecorderUI() {
+        isRecording = false;
+        clearInterval(timerInterval);
+        
+        const micBtn = document.getElementById('mic-action-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const waveGrid = document.getElementById('recording-wave-grid');
+        const timerEl = document.getElementById('recording-timer');
+        const statusEl = document.getElementById('recording-status');
+        const playback = document.getElementById('playback-player');
+        const submitBtn = document.getElementById('submit-practice-btn');
+
+        micBtn.classList.remove('recording');
+        micIcon.className = 'fa-solid fa-microphone fa-2x';
+        waveGrid.style.display = 'none';
+        timerEl.textContent = '00:00';
+        statusEl.textContent = 'Click button to start recording';
+        statusEl.style.color = 'var(--text-muted)';
+        playback.style.display = 'none';
+        playback.src = '';
+        submitBtn.disabled = true;
+        recordedBlob = null;
+    }
+
+    function submitRecordedAudio() {
+        if (!recordedBlob) return;
+
+        const submitBtn = document.getElementById('submit-practice-btn');
+        const uploadLabel = document.getElementById('upload-status-label');
+        
+        submitBtn.disabled = true;
+        uploadLabel.style.display = 'block';
+
+        const formData = new FormData();
+        // Pack blob as file
+        const audioFile = new File([recordedBlob], "practice_response.webm", {type: "audio/webm"});
+        formData.append("file", audioFile);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/upload', true);
+        
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                if (response.success && response.redirect) {
+                    window.location.href = response.redirect;
+                } else {
+                    alert('Upload failed: ' + (response.error || 'Unknown error'));
+                    submitBtn.disabled = false;
+                    uploadLabel.style.display = 'none';
+                }
+            } else {
+                alert('An error occurred during voice upload.');
+                submitBtn.disabled = false;
+                uploadLabel.style.display = 'none';
+            }
+        };
+
+        xhr.onerror = function() {
+            alert('Upload error occurred.');
+            submitBtn.disabled = false;
+            uploadLabel.style.display = 'none';
+        };
+
+        xhr.send(formData);
+    }
+</script>
+{% endblock %}

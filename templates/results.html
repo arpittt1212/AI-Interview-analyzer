@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Interview Analysis Dashboard - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+    <!-- Left Sidebar -->
+    <aside class="app-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="/upload" id="sidebar-upload"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Interview</span></a>
+            </li>
+            <li class="sidebar-item active">
+                <a href="/dashboard" id="sidebar-dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-my-interviews"><i class="fa-solid fa-microphone"></i><span>My Interviews</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/reports" id="sidebar-reports"><i class="fa-solid fa-file-invoice"></i><span>Reports</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/practice" id="sidebar-practice"><i class="fa-solid fa-graduation-cap"></i><span>Practice</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/settings" id="sidebar-settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/help" id="sidebar-help"><i class="fa-solid fa-circle-question"></i><span>Help & Support</span></a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-avatar">{{ session.get('user_name', 'U')[0] }}</div>
+            <div class="user-info-box">
+                <span class="user-name-label">{{ session.get('user_name', 'Guest User') }}</span>
+                <span class="user-email-label">{{ session.get('user_email', 'guest@example.com') }}</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="app-content">
+        <!-- Dashboard Header -->
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <a href="/reports" class="btn btn-white btn-sm back-btn" style="margin-bottom: 0.75rem;"><i class="fa-solid fa-arrow-left"></i> &nbsp;Back to Reports</a>
+                <h2 class="page-title">Performance Analysis Dashboard</h2>
+                <p class="page-subtitle">File: <strong style="color: var(--dark-navy);">{{ interview.file_name }}</strong> &nbsp;|&nbsp; Analyzed on: {{ interview.created_at }}</p>
+            </div>
+            <div class="results-action-bar" style="border-top: none; padding-top: 0; margin-bottom: 0.25rem;">
+                <button onclick="window.print()" class="btn btn-primary" id="btn-download-pdf">
+                    <i class="fa-solid fa-file-pdf"></i> &nbsp;Download AI Report PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- 1. Top Metrics Cards Grid -->
+        <div class="results-grid-top">
+            <!-- Metric 1: Communication Score -->
+            <div class="metric-card">
+                <span class="metric-label">Communication</span>
+                <span class="metric-val">{{ interview.communication_score }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Clarity & Coherence</span>
+            </div>
+
+            <!-- Metric 2: Confidence Score -->
+            <div class="metric-card">
+                <span class="metric-label">Confidence</span>
+                <span class="metric-val">{{ interview.confidence_score }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Delivery Patterns</span>
+            </div>
+
+            <!-- Metric 3: Grammar Score -->
+            <div class="metric-card">
+                <span class="metric-label">Grammar</span>
+                <span class="metric-val">{{ interview.grammar_score }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Structure Quality</span>
+            </div>
+
+            <!-- Metric 4: Speaking Speed Score -->
+            <div class="metric-card">
+                <span class="metric-label">Vocal Speed</span>
+                <span class="metric-val">{{ interview.speaking_speed_score }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">WPM Pacing Score</span>
+            </div>
+
+            <!-- Metric 5: Answer Quality Score -->
+            <div class="metric-card">
+                <span class="metric-label">Answer Quality</span>
+                <span class="metric-val">{{ interview.answer_quality_score }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Detail & Variance</span>
+            </div>
+
+            <!-- Metric 6: Overall Interview Score -->
+            <div class="metric-card score-overall">
+                <span class="metric-label">Overall Score</span>
+                <span class="metric-val">{{ interview.overall_score }}</span>
+                <span style="font-size: 0.75rem; color: var(--primary-blue); font-weight: 700; margin-top: 0.25rem;">Weighted Average</span>
+            </div>
+        </div>
+
+        <!-- 2. Mid Section: Transcript and Visual Charts -->
+        <div class="dashboard-analysis-layout">
+            <!-- Left Side: Transcript Panel -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Interview Transcript</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;"><i class="fa-solid fa-asterisk" style="color: var(--danger); font-size: 0.7rem;"></i> Red dotted words indicate filler phrases</span>
+                </div>
+                
+                <!-- Query Search bar widget -->
+                <div class="transcript-search-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-input-icon"></i>
+                        <input type="text" id="transcript-search-field" class="search-field" placeholder="Search transcript terms (e.g. database, indexing)...">
+                    </div>
+                </div>
+
+                <!-- Scrollable Transcript body -->
+                <div class="transcript-body" id="transcript-body-content">{{ interview.transcript }}</div>
+            </div>
+
+            <!-- Right Side: Graphic Visual Charts -->
+            <div class="chart-container-box">
+                <!-- Filler Word Chart Card -->
+                <div class="dashboard-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Filler Word Analysis</span>
+                    </div>
+                    <div class="chart-item-wrapper">
+                        <div class="chart-canvas-holder">
+                            <canvas id="fillerDonutChart"></canvas>
+                        </div>
+                        <div class="chart-desc-row">
+                            <div class="chart-desc-title">Total Filler Words: <span style="color: var(--danger);">{{ filler_counts.total }}</span></div>
+                            <div class="chart-desc-subtitle">Aim for less than 15 total occurrences in a 1-minute audio block.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speaking Speed Gauge Card -->
+                <div class="dashboard-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Speaking Speed (Pace)</span>
+                    </div>
+                    <div class="chart-item-wrapper">
+                        <div class="chart-canvas-holder">
+                            <canvas id="wpmGaugeChart"></canvas>
+                            <!-- Speed HUD in Center -->
+                            <div class="gauge-wpm-box">
+                                <div class="gauge-wpm-val">{{ interview.speaking_speed }}</div>
+                                <div class="gauge-wpm-label">WPM</div>
+                            </div>
+                        </div>
+                        <div class="chart-desc-row">
+                            <div class="chart-desc-title">
+                                Pace Status: 
+                                <span style="color: {% if interview.speaking_speed < 110 %}var(--warning){% elif interview.speaking_speed <= 150 %}var(--success){% else %}var(--danger){% endif %};">
+                                    {% if interview.speaking_speed < 110 %}
+                                        Slow Pace
+                                    {% elif interview.speaking_speed <= 150 %}
+                                        Good Pace
+                                    {% else %}
+                                        Fast Pace
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="chart-desc-subtitle">Professional range resides between 110 - 150 words per minute.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Bottom Section: AI Feedback and Recommendations -->
+        <div class="feedback-grid">
+            <!-- Qualitative Feedback Card -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-comment-dots" style="color: var(--success);"></i> &nbsp;AI Feedback Diagnostics</span>
+                </div>
+                <ul class="feedback-list-items">
+                    {% for item in feedback %}
+                        <li class="feedback-bullet-card">
+                            <div class="feedback-bullet-icon positive">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <span class="feedback-bullet-text">{{ item }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Quantitative Recommendations Card -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-lightbulb" style="color: var(--primary-blue);"></i> &nbsp;Top Actionable Recommendations</span>
+                </div>
+                <ul class="feedback-list-items">
+                    {% for rec in recommendations %}
+                        <li class="feedback-bullet-card">
+                            <div class="feedback-bullet-icon recommendation">
+                                <i class="fa-solid fa-circle-arrow-up"></i>
+                            </div>
+                            <span class="feedback-bullet-text">{{ rec }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Extract JSON serialized values passed from Python backend to initialize graphics
+    const fillerCounts = JSON.parse('{{ filler_counts_json|safe }}');
+    const speakingSpeed = parseInt('{{ interview.speaking_speed }}');
+    
+    // Call main.js chart generator hook
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.initDashboardCharts) {
+            window.initDashboardCharts(fillerCounts, speakingSpeed);
+        }
+    });
+</script>
+{% endblock %}

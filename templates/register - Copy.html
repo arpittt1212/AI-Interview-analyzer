@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - AI Interview Analyzer{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Get Started Free</h2>
+            <p>Analyze your speech and interview performance instantly</p>
+        </div>
+
+        <form action="/register" method="POST" id="register-form" onsubmit="return validatePasswords()">
+            <!-- Name Input -->
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" name="name" class="form-input" placeholder="Alex Johnson" required autocomplete="name">
+            </div>
+
+            <!-- Email Input -->
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="alex@example.com" required autocomplete="email">
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required autocomplete="new-password">
+            </div>
+
+            <!-- Confirm Password Input -->
+            <div class="form-group">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="••••••••" required autocomplete="new-password">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-block" id="btn-register-submit">Create My Account</button>
+        </form>
+
+        <div class="auth-footer-back">
+            <a href="/login"><i class="fa-solid fa-arrow-left"></i> Back to Login</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validatePasswords() {
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm_password').value;
+        if (password !== confirm) {
+            alert("Passwords do not match. Please verify.");
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}
